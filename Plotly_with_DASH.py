@@ -51,13 +51,13 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
               Input(component_id='site-dropdown', component_property='value')
               )
 def get_pie_chart(entered_site):
-    filtered_df = spacex_df
+    df_clean = spacex_df
     if entered_site == 'ALL':
-        fig = px.pie(filtered_df,values='class', names='Launch Site', title='Number of Successful Launches by Site')
+        fig = px.pie(df_clean,values='class', names='Launch Site', title='Number of Successful Launches by Site')
         return fig
     else:
-        df_site = filtered_df[filtered_df['Launch Site']==entered_site]
-        df_site = df_site.groupby(['Launch Site','class']).size().reset_index(name='class count')
+        df_loc = df_clean[df_clean['Launch Site']==entered_site]
+        df_loc = df_loc.groupby(['Launch Site','class']).size().reset_index(name='class count')
         title_pie = f'Successful Launches for Chosen Site'
         fig = px.pie(df_site, values='class count', names='class', title='Number Successful Launches for Chosen Site')
         return fig 
@@ -71,15 +71,15 @@ def get_pie_chart(entered_site):
 
 def get_scatter_chart(entered_site, payload_range):
     low, high=payload_range
-    df_slide=spacex_df[(spacex_df['Payload Mass (kg)']>=low)&(spacex_df['Payload Mass (kg)']<=high)]
+    df_all=spacex_df[(spacex_df['Payload Mass (kg)']>=low)&(spacex_df['Payload Mass (kg)']<=high)]
     if entered_site=='ALL':
-        fig=px.scatter(df_slide, x='Payload Mass (kg)', y='class', color='Booster Version Category',
+        fig=px.scatter(df_all, x='Payload Mass (kg)', y='class', color='Booster Version Category',
         title='Success Rate by Payload Mass and Booster Version, All Sites')
         return fig
     
     else:
-        df_select= df_slide[spacex_df['Launch Site'] == entered_site]
-        fig=px.scatter(df_select, x='Payload Mass (kg)', y='class', color='Booster Version Category',
+        df_ltd= df_all[spacex_df['Launch Site'] == entered_site]
+        fig=px.scatter(df_ltd, x='Payload Mass (kg)', y='class', color='Booster Version Category',
         title='Success Rate by Payload Mass and Booster Version, Chosen Site')
         return fig
 
